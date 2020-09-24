@@ -17,16 +17,8 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-            <c:if test="${user != null}">
-                <a class="nav-link" href="./register.jsp">Edit user<span class="sr-only">(current)</span></a>
-            </c:if>
-            <c:if test="${user == null}">
                 <li class="nav-item">
                     <a class="nav-link" href="./login.jsp">User login</a>
                 </li>
@@ -35,8 +27,6 @@
                         User Registration<span class="sr-only">(current)</span>
                     </a>
                 </li>
-            </c:if>
-
         </ul>
     </div>
 </nav>
@@ -44,10 +34,10 @@
     <div class="card">
         <div class="card-body">
             <c:if test="${user != null}">
-                <form action="register" method="post">
+                <form action="<%= request.getContextPath()%>register" method="post">
             </c:if>
             <c:if test="${user == null}">
-                <form action="update" method="post">
+                <form action="<%= request.getContextPath()%>update" method="post">
             </c:if>
             <caption>
                 <h1 class="h3 text-center mb-3 font-weight-normal">
@@ -84,12 +74,10 @@
                     <input type="text" class="form-control" name="phoneNo" id="phoneNo"
                            value="<c:out value='${user.phoneNo}' />">
                 </div>
-                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="submit" class="btn btn-success">Save</button>
                 </form>
         </div>
     </div>
-    <form action="LoginServlet" method="post">
-
 </div>
 </body>
 </html>

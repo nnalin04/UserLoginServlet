@@ -5,6 +5,7 @@
   Time: 14:28
   To change this template use File | Settings | File Templates.
 --%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html lang="en">
 <head>
@@ -16,46 +17,67 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="./login.jsp">User login</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="./register.jsp">User Registration<span class="sr-only">(current)</span></a>
-            </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./login.jsp">User login</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="./register.jsp">
+                        User Registration<span class="sr-only">(current)</span>
+                    </a>
+                </li>
         </ul>
     </div>
 </nav>
 <div class="container">
-    <form action="LoginServlet" method="post">
-        <h1 class="h3 text-center mb-3 font-weight-normal">User Registration</h1>
-        <div class="form-group">
-            <label for="firstName">First Name</label>
-            <input type="text" class="form-control" name="firstName" id="firstName" placeholder="First Name">
+    <div class="card">
+        <div class="card-body">
+            <c:if test="${user != null}">
+                <form action="<%= request.getContextPath()%>register" method="post">
+            </c:if>
+            <c:if test="${user == null}">
+                <form action="<%= request.getContextPath()%>update" method="post">
+            </c:if>
+            <caption>
+                <h1 class="h3 text-center mb-3 font-weight-normal">
+                    <c:if test="${user != null}">
+                        Registration
+                    </c:if>
+                    <c:if test="${user == null}">
+                        Edit User
+                    </c:if>
+                </h1>
+            </caption>
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" class="form-control" name="firstName" id="firstName"
+                           value="<c:out value='${user.firstName}' />" >
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" class="form-control" name="lastName" id="lastName"
+                           value="<c:out value='${user.lastName}' />">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Id</label>
+                    <input type="text" class="form-control" name="email" id="email"
+                           value="<c:out value='${user.email}' />">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="text" class="form-control" name="password" id="password"
+                           value="<c:out value='${user.password}' />">
+                </div>
+                <div class="form-group">
+                    <label for="phoneNo">Phone No.</label>
+                    <input type="text" class="form-control" name="phoneNo" id="phoneNo"
+                           value="<c:out value='${user.phoneNo}' />">
+                </div>
+                <button type="submit" class="btn btn-success">Save</button>
+                </form>
         </div>
-        <div class="form-group">
-            <label for="lastName">Last Name</label>
-            <input type="text" class="form-control" name="lastName" id="lastName" placeholder="Last Name">
-        </div>
-        <div class="form-group">
-            <label for="email">Email Id</label>
-            <input type="text" class="form-control" name="email" id="email" placeholder="email Id">
-        </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="text" class="form-control" name="password" id="password" placeholder="password">
-        </div>
-        <div class="form-group">
-            <label for="phoneNo">Phone No.</label>
-            <input type="text" class="form-control" name="phoneNo" id="phoneNo" placeholder="phoneNo">
-        </div>
-        <button type="submit" class="btn btn-primary">Register User</button>
-    </form>
+    </div>
 </div>
 </body>
 </html>

@@ -21,12 +21,19 @@ public class LoginServlet extends HttpServlet {
 
     public LoginServlet() {
         this.userService = new UserService();
-        this.user = new User();
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
+        String action = req.getServletPath();
+        if (action.equals("/login")){
+            try {
+                this.userLogin(req, res);
+            } catch (UserLoginException | SQLException e) {
+                e.printStackTrace();
+            }
+        }
         super.doGet(req, res);
     }
 
@@ -34,15 +41,7 @@ public class LoginServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
         String action = req.getServletPath();
-
         switch (action) {
-            case "/login":
-                try {
-                    this.userLogin(req, res);
-                } catch (UserLoginException | SQLException e) {
-                    e.printStackTrace();
-                }
-                break;
             case "/register" :
                 try {
                     this.userRegistration(req, res);
@@ -80,42 +79,43 @@ public class LoginServlet extends HttpServlet {
 
     private void getLoginPage(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-        RequestDispatcher rd = getServletContext().getRequestDispatcher("./login.jsp");
+        RequestDispatcher rd = getServletContext().getRequestDispatcher("views/login.jsp");
         rd.forward(req, res);
     }
 
     private void updateUser(HttpServletRequest req, HttpServletResponse res)
             throws SQLException, IOException {
-        user.firstName = req.getParameter("firstName");
-        user.lastName = req.getParameter("lastName");
-        user.email = req.getParameter("email");
-        user.password = req.getParameter("password");
-        user.phoneNo = req.getParameter("phoneNo");
+        userObject(req);
         userService.updateUser(user);
-        res.sendRedirect("./editOrDelete.jsp");
+        res.sendRedirect("views/editOrDelete.jsp");
+    }
+
+    private void userObject(HttpServletRequest req) {
+        String firstName = req.getParameter("firstName");
+        String lastName = req.getParameter("lastName");
+        String email = req.getParameter("email");
+        String password = req.getParameter("password");
+        String phoneNo = req.getParameter("phoneNo");
+        this.user = new User(firstName, lastName, email, password, phoneNo);
     }
 
     private void forwardToUpdatePage(HttpServletRequest req, HttpServletResponse res)
             throws UserLoginException, SQLException, ServletException, IOException {
         String email = req.getParameter("email");
-        User existingUser =  userService.getUsetDetail(email);
-        RequestDispatcher rd = getServletContext().getRequestDispatcher("./register.jsp");
-        req.setAttribute("user", existingUser);
-        rd.forward(req, res);
+        this.user = userService.getUsetDetail(email);
+        req.setAttribute("user", this.user);
+        req.getRequestDispatcher("views/register.jsp").forward(req, res);
     }
 
-    private void deleteUser(HttpServletRequest req, HttpServletResponse res) throws SQLException {
+    private void deleteUser(HttpServletRequest req, HttpServletResponse res) throws SQLException, IOException {
         String email = req.getParameter("email");
         userService.deleteUser(email);
+        res.sendRedirect("views/login.jsp");
     }
 
     private void userRegistration(HttpServletRequest req, HttpServletResponse res)
             throws SQLException, IOException, ServletException {
-        user.firstName = req.getParameter("firstName");
-        user.lastName = req.getParameter("lastName");
-        user.email = req.getParameter("email");
-        user.password = req.getParameter("password");
-        user.phoneNo = req.getParameter("phoneNo");
+        userObject(req);
         if (userService.checkInput(user).equals("success")){
             userService.registerUser(user);
             res.sendRedirect("./login.jsp");
@@ -127,28 +127,30 @@ public class LoginServlet extends HttpServlet {
             out.println("</script>");
             rd.include(req, res);
         }
-
     }
 
-    private void userLogin(HttpServletRequest req, HttpServletResponse res) throws UserLoginException, SQLException, IOException {
+    private void userLogin(HttpServletRequest req, HttpServletResponse res)
+            throws UserLoginException, SQLException, IOException {
         String email = req.getParameter("email");
         String pwd = req.getParameter("pwd");
-        user = userService.getUsetDetail(email);
-        RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.jsp");
-        PrintWriter out = res.getWriter();
+        this.user = userService.getUsetDetail(email);
+
         try {
-            if (user != null) {
-                if (user.password.equals(pwd)){
+            if (this.user != null) {
+                if (this.user.password.equals(pwd)){
                     req.setAttribute("email", email);
-                    req.getRequestDispatcher("editOrDelete.jsp").forward(req, res);
+                    req.getRequestDispatcher("views/editOrDelete.jsp").forward(req, res);
                 } else {
+                    RequestDispatcher rd = getServletContext().getRequestDispatcher("views/login.jsp");
+                    PrintWriter out = res.getWriter();
                     out.println("<script type=\"text/javascript\">");
                     out.println("alert('wrong password');");
                     out.println("</script>");
                     rd.include(req, res);
                 }
             } else {
-
+                RequestDispatcher rd = getServletContext().getRequestDispatcher("./login.jsp");
+                PrintWriter out = res.getWriter();
                 out.println("<script type=\"text/javascript\">");
                 out.println("alert('wrong email Id');");
                 out.println("</script>");

@@ -44,11 +44,6 @@ public class UserRepo {
         return getUser(sql);
     }
 
-    public User findByUserId(int userId) throws SQLException {
-        String sql = "select * from tableName where id='"+userId+"'";
-        return getUser(sql);
-    }
-
     private User getUser(String sql) throws SQLException {
         sql = addTableName(sql);
         myStmt = conn.prepareStatement(sql);
@@ -61,19 +56,18 @@ public class UserRepo {
             user.email = rs.getString("email");
             user.password = rs.getString("password");
             user.phoneNo = rs.getString("phoneNo");
-            return user;
         }
-        return null;
+        return user;
     }
 
-    public User updateUser(int userId, String input, String type) throws SQLException {
+    public void updateUser(User user, String input, String type) throws SQLException {
         String sql1 = this.createQuery(type);
         String sql = addTableName(sql1);
         myStmt = conn.prepareStatement(sql);
         myStmt.setString(1, input);
-        myStmt.setString(2, ""+userId+"");
+        myStmt.setString(2, ""+user.userId+"");
         myStmt.executeUpdate();
-        return findByUserId(userId);
+        findByEmailId(user.email);
     }
 
     private String createQuery(String type) {

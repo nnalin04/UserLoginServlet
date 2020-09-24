@@ -24,11 +24,11 @@ public class UserService {
     }
 
     public void updateUser(User user) throws SQLException {
-        userRepo.updateUser(user.userId, user.firstName, "firstName");
-        userRepo.updateUser(user.userId, user.lastName, "lastName");
-        userRepo.updateUser(user.userId, user.email, "email");
-        userRepo.updateUser(user.userId, user.password, "password");
-        userRepo.updateUser(user.userId, user.phoneNo, "phoneNo");
+        userRepo.updateUser(user, user.firstName, "firstName");
+        userRepo.updateUser(user, user.lastName, "lastName");
+        userRepo.updateUser(user, user.email, "email");
+        userRepo.updateUser(user, user.password, "password");
+        userRepo.updateUser(user, user.phoneNo, "phoneNo");
     }
 
     public void deleteUser(String email) throws SQLException {
