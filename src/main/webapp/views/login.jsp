@@ -1,4 +1,11 @@
-<!DOCTYPE html>
+<%--
+  Created by IntelliJ IDEA.
+  User: 1407162
+  Date: 24-09-2020
+  Time: 12:43
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -13,33 +20,30 @@
     <!-- Custom styles for this template -->
     <link href="login.css" rel="stylesheet">
 </head>
-<body class="text-center bg-light">
+<body class="text-center">
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <!--<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
-    </button>-->
-
+    </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="./login.html">User login<span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="./login.jsp">User login<span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="./register.html">User Registration</a>
+                <a class="nav-link" href="./register.jsp">User Registration</a>
             </li>
         </ul>
     </div>
 </nav>
-<form class="form-signin">
+<form class="form-signin" action="LoginServlet" method="post">
     <h1 class="h3 mb-3 font-weight-normal">User Login</h1>
     <label for="inputEmail" class="sr-only">Email address</label>
-    <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+    <input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
     <label for="inputPassword" class="sr-only">Password</label>
-    <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+    <input type="password" name="pwd" id="inputPassword" class="form-control" placeholder="Password" required>
     <button class="btn btn-lg btn-primary btn-block" type="submit">Log in</button>
-
-    <p class="mt-5 mb-3 text-muted">&copy; 2017-2020</p>
 </form>
 </body>
 </html>

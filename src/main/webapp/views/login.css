@@ -1,7 +1,4 @@
 html,
-body {
-    height: 100%;
-}
 
 body {
     display: -ms-flexbox;
@@ -9,6 +6,7 @@ body {
     align-items: center;
     padding-top: 0px;
     padding-bottom: 40px;
+    background-color:  #f8f9fa;
 }
 
 .form-signin {
