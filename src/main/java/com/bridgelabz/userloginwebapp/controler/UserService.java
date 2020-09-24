@@ -1,6 +1,7 @@
 package com.bridgelabz.userloginwebapp.controler;
 
 import com.bridgelabz.userloginwebapp.Repositories.UserRepo;
+import com.bridgelabz.userloginwebapp.configure.Database;
 import com.bridgelabz.userloginwebapp.exception.UserLoginException;
 import com.bridgelabz.userloginwebapp.model.User;
 
@@ -10,7 +11,8 @@ public class UserService {
     UserRepo userRepo;
 
     public UserService() {
-        userRepo = new UserRepo();
+        userRepo = new UserRepo(Database.USER_REGISTRATION.url, Database.USER_REGISTRATION.userId,
+                Database.USER_REGISTRATION.password, Database.USER_REGISTRATION.tableName);
     }
 
     public void registerUser(User user) throws SQLException {

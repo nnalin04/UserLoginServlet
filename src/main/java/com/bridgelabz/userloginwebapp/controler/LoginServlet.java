@@ -28,8 +28,8 @@ public class LoginServlet extends HttpServlet {
 
         try {
             if (userService.loginUser(email, pwd)) {
-                req.setAttribute("user", email);
-                req.getRequestDispatcher("LoginSuccess.jsp").forward(req, res);
+                req.setAttribute("email", email);
+                req.getRequestDispatcher("editOrDelete.jsp").forward(req, res);
             } else {
                 RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.jsp");
                 PrintWriter out = res.getWriter();

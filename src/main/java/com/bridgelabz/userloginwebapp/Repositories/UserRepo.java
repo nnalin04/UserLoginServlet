@@ -1,29 +1,37 @@
 package com.bridgelabz.userloginwebapp.Repositories;
 
+import com.bridgelabz.userloginwebapp.configure.Database;
 import com.bridgelabz.userloginwebapp.model.User;
 
 import java.sql.*;
 
 public class UserRepo {
+
+    private final String tableName;
     Connection conn;
     PreparedStatement myStmt = null;
 
-    public UserRepo() {
-        createConnection();
+    public UserRepo(String url, String userId, String password, String tableName) {
+        createConnection(url, userId, password);
+        this.tableName = tableName;
     }
 
-    private void createConnection(){
+    private void createConnection(String url, String userId, String password){
         try {
-            this.conn = DriverManager.getConnection(url, userName, password);
+            this.conn = DriverManager.getConnection(url, userId, password);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+    }
 
+    private String addTableName(String statement) {
+        return statement.replaceAll("tableName", this.tableName);
     }
 
     public User saveUserInDatabase(User user) throws SQLException {
-        String sql = "insert into userdetail "+" (firstName, lastName, email, password, phoneNo)"
+        String sql = "insert into tableName "+" (firstName, lastName, email, password, phoneNo)"
                 +" values (?, ?, ?, ?, ?)";
+        sql = addTableName(sql);
         myStmt = conn.prepareStatement(sql);
         myStmt.setString(1, user.firstName);
         myStmt.setString(2, user.lastName);
@@ -35,7 +43,8 @@ public class UserRepo {
     }
 
     public User findByEmailId(String email) throws SQLException {
-        String sql = "select * from userdetail where email='"+email+"'";
+        String sql = "select * from tableName where email='"+email+"'";
+        sql = addTableName(sql);
         myStmt = conn.prepareStatement(sql);
         ResultSet rs = myStmt.executeQuery();
         User user = new User();
@@ -50,7 +59,8 @@ public class UserRepo {
     }
 
     public User updateUser(String email, String input, String type) throws SQLException {
-        String sql = this.createQuery(type);
+        String sql1 = this.createQuery(type);
+        String sql = addTableName(sql1);
         myStmt = conn.prepareStatement(sql);
         myStmt.setString(1, input);
         myStmt.setString(2, email);
@@ -59,11 +69,12 @@ public class UserRepo {
     }
 
     private String createQuery(String type) {
-        return "update userdetail set "+type+"=? where email=?";
+        return "update tableName set "+type+"=? where email=?";
     }
 
     public void deleteByEmailId(String email) throws SQLException {
-        String sql = "delete from userdetail where email=?";
+        String sql = "delete from tableName where email=?";
+        sql = addTableName(sql);
         myStmt = conn.prepareStatement(sql);
         myStmt.setString(1, email);
         myStmt.executeUpdate();
