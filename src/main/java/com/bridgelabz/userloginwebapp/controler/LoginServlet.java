@@ -1,6 +1,7 @@
 package com.bridgelabz.userloginwebapp.controler;
 
 import com.bridgelabz.userloginwebapp.exception.UserLoginException;
+import com.bridgelabz.userloginwebapp.model.User;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -12,31 +13,148 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 
-@WebServlet(
-        description = "Login Servlet Testing",
-        urlPatterns = {"/LoginServlet"}
-)
+@WebServlet("/")
 public class LoginServlet extends HttpServlet {
 
-    UserService userService = new UserService();
+    UserService userService;
+    User user;
+
+    public LoginServlet() {
+        this.userService = new UserService();
+        this.user = new User();
+    }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        //get request parameter from userId and Password
+    protected void doPost(HttpServletRequest req, HttpServletResponse res)
+            throws ServletException, IOException {
+        super.doGet(req, res);
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse res)
+            throws ServletException, IOException {
+        String action = req.getServletPath();
+
+        switch (action) {
+            case "/login":
+                try {
+                    this.userLogin(req, res);
+                } catch (UserLoginException | SQLException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "/register" :
+                try {
+                    this.userRegistration(req, res);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "/edit" :
+                try {
+                    this.forwardToUpdatePage(req, res);
+                } catch (UserLoginException | SQLException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "/update" :
+                try {
+                    this.updateUser(req, res);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+                break;
+            case "/delete" :
+                try {
+                    this.deleteUser(req, res);
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+                break;
+            default:
+                this.getLoginPage(req, res);
+                break;
+        }
+    }
+
+    private void getLoginPage(HttpServletRequest req, HttpServletResponse res)
+            throws ServletException, IOException {
+        RequestDispatcher rd = getServletContext().getRequestDispatcher("./login.jsp");
+        rd.forward(req, res);
+    }
+
+    private void updateUser(HttpServletRequest req, HttpServletResponse res)
+            throws SQLException, IOException {
+        user.firstName = req.getParameter("firstName");
+        user.lastName = req.getParameter("lastName");
+        user.email = req.getParameter("email");
+        user.password = req.getParameter("password");
+        user.phoneNo = req.getParameter("phoneNo");
+        userService.updateUser(user);
+        res.sendRedirect("./editOrDelete.jsp");
+    }
+
+    private void forwardToUpdatePage(HttpServletRequest req, HttpServletResponse res)
+            throws UserLoginException, SQLException, ServletException, IOException {
+        String email = req.getParameter("email");
+        User existingUser =  userService.getUsetDetail(email);
+        RequestDispatcher rd = getServletContext().getRequestDispatcher("./register.jsp");
+        req.setAttribute("user", existingUser);
+        rd.forward(req, res);
+    }
+
+    private void deleteUser(HttpServletRequest req, HttpServletResponse res) throws SQLException {
+        String email = req.getParameter("email");
+        userService.deleteUser(email);
+    }
+
+    private void userRegistration(HttpServletRequest req, HttpServletResponse res)
+            throws SQLException, IOException, ServletException {
+        user.firstName = req.getParameter("firstName");
+        user.lastName = req.getParameter("lastName");
+        user.email = req.getParameter("email");
+        user.password = req.getParameter("password");
+        user.phoneNo = req.getParameter("phoneNo");
+        if (userService.checkInput(user).equals("success")){
+            userService.registerUser(user);
+            res.sendRedirect("./login.jsp");
+        } else {
+            RequestDispatcher rd = getServletContext().getRequestDispatcher("./register.jsp");
+            PrintWriter out = res.getWriter();
+            out.println("<script type=\"text/javascript\">");
+            out.println("alert('"+userService.checkInput(user)+"');");
+            out.println("</script>");
+            rd.include(req, res);
+        }
+
+    }
+
+    private void userLogin(HttpServletRequest req, HttpServletResponse res) throws UserLoginException, SQLException, IOException {
         String email = req.getParameter("email");
         String pwd = req.getParameter("pwd");
-
+        user = userService.getUsetDetail(email);
+        RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.jsp");
+        PrintWriter out = res.getWriter();
         try {
-            if (userService.loginUser(email, pwd)) {
-                req.setAttribute("email", email);
-                req.getRequestDispatcher("editOrDelete.jsp").forward(req, res);
+            if (user != null) {
+                if (user.password.equals(pwd)){
+                    req.setAttribute("email", email);
+                    req.getRequestDispatcher("editOrDelete.jsp").forward(req, res);
+                } else {
+                    out.println("<script type=\"text/javascript\">");
+                    out.println("alert('wrong password');");
+                    out.println("</script>");
+                    rd.include(req, res);
+                }
             } else {
-                RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.jsp");
-                PrintWriter out = res.getWriter();
-                out.println("<font color=red>Either user name or password is wrong. </font>");
+
+                out.println("<script type=\"text/javascript\">");
+                out.println("alert('wrong email Id');");
+                out.println("</script>");
                 rd.include(req, res);
             }
-        } catch (UserLoginException | SQLException e) {
+        } catch (ServletException | IOException e) {
             e.printStackTrace();
         }
     }

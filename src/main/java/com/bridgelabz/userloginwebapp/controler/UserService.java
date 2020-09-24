@@ -16,80 +16,54 @@ public class UserService {
     }
 
     public void registerUser(User user) throws SQLException {
-        user.firstName = checkFieldValidation(UserRegistration.ValidatorPat.NAME,
-                user.firstName, "firstName");
-        user.lastName = checkFieldValidation(UserRegistration.ValidatorPat.NAME,
-                user.lastName, "lastName");
-        user.email = checkFieldValidation(UserRegistration.ValidatorPat.EMAIL,
-                user.email, "email");
-        user.password = checkFieldValidation(UserRegistration.ValidatorPat.PASSWORD,
-                user.password, "password");
-        user.phoneNo = checkFieldValidation(UserRegistration.ValidatorPat.MOBILE,
-                user.phoneNo, "phone no.");
         userRepo.saveUserInDatabase(user);
-        System.out.println("User registered");
     }
 
-    public boolean loginUser(String email, String password) throws UserLoginException, SQLException {
-        boolean loginResult = false;
-        User user = userRepo.findByEmailId(email);
-        if (user != null && user.password.equals(password))
-            loginResult = true;
-        return loginResult;
+    public User getUsetDetail(String email) throws UserLoginException, SQLException {
+        return userRepo.findByEmailId(email);
     }
 
     public void updateUser(User user) throws SQLException {
-        System.out.println("What do you want to up date");
-        System.out.println("1 - email");
-        System.out.println("2 - password");
-        System.out.println("3 - phoneNo");
-        int choice = RegisterUser.takingIntInput();
-        RegisterUser.takingStringInput();
-        switch(choice) {
-            case 1:
-                System.out.println("Enter the new email");
-                String newEmail = RegisterUser.takingStringInput();
-
-                newEmail = checkFieldValidation(UserRegistration.ValidatorPat.EMAIL,
-                        newEmail, "email");
-                user.email = userRepo.updateUser(user.email, newEmail, "email").email;
-                break;
-            case 2:
-                System.out.println("Enter the new password");
-                String newPassword = RegisterUser.takingStringInput();
-
-                newPassword = checkFieldValidation(UserRegistration.ValidatorPat.PASSWORD,
-                        newPassword, "password");
-                user.password = userRepo.updateUser(user.email, newPassword, "password").password;
-                break;
-            case 3:
-                System.out.println("Enter the new phoneNo");
-                String newPhoneNo = RegisterUser.takingStringInput();
-                newPhoneNo = checkFieldValidation(UserRegistration.ValidatorPat.MOBILE,
-                        newPhoneNo, "phoneNo");
-                user.phoneNo = userRepo.updateUser(user.email, newPhoneNo, "phoneNo").phoneNo;
-                break;
-            default:
-                System.out.println("Invalid input");
-        }
+        userRepo.updateUser(user.userId, user.firstName, "firstName");
+        userRepo.updateUser(user.userId, user.lastName, "lastName");
+        userRepo.updateUser(user.userId, user.email, "email");
+        userRepo.updateUser(user.userId, user.password, "password");
+        userRepo.updateUser(user.userId, user.phoneNo, "phoneNo");
     }
 
     public void deleteUser(String email) throws SQLException {
         userRepo.deleteByEmailId(email);
     }
 
+    public String checkInput(User user) throws SQLException {
+        String result;
+        result = checkFieldValidation(UserRegistration.ValidatorPat.NAME,
+                user.firstName, "firstName");
+        if (!result.equals("success")) return result;
+        result = checkFieldValidation(UserRegistration.ValidatorPat.NAME,
+                user.lastName, "lastName");
+        if (!result.equals("success")) return result;
+        result = checkFieldValidation(UserRegistration.ValidatorPat.EMAIL,
+                user.email, "email");
+        if (!result.equals("success")) return result;
+        result = checkFieldValidation(UserRegistration.ValidatorPat.PASSWORD,
+                user.password, "password");
+        if (!result.equals("success")) return result;
+        result = checkFieldValidation(UserRegistration.ValidatorPat.MOBILE,
+                user.phoneNo, "phone no.");
+        if (!result.equals("success")) return result;
+        return result;
+    }
+
     private String checkFieldValidation(UserRegistration.ValidatorPat pattern, String input, String type)
             throws SQLException {
 
-        while (userRepo.findByEmailId(input).email != null && type == "email"){
-            System.out.println(type+" already present please enter different "+type);
-            input = RegisterUser.takingStringInput();
-        }
+        if (userRepo.findByEmailId(input).email != null && type.equals("email"))
+            return "email already present";
 
-        while(!UserRegistration.validateInput(input, pattern)){
-            System.out.println("Invalid "+type+" please re-enter");
-            input = RegisterUser.takingStringInput();
-        }
-        return input;
+        if (!UserRegistration.validateInput(input, pattern))
+            return "Invalid "+type+" please re-enter";
+
+        return "success";
     }
 }
