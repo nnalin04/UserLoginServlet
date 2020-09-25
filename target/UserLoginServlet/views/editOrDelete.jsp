@@ -47,14 +47,11 @@
             </thead>
             <tbody>
             <tr>
-                <c: var="user">
-                    <td><jsp:useBean id="user" scope="request" type="com.bridgelabz.userloginwebapp.model.User"/>
-                    <c:out value="${user.firstName}" /></td>
-                    <td><c:out value="${user.lastName}" /></td>
-                    <td><c:out value="${user.email}" /></td>
-                    <td><c:out value="${user.password}" /></td>
-                    <td><c:out value="${user.phoneNo}" /></td>
-                </c:>
+                <td><c:out value="${user.firstName}" /></td>
+                <td><c:out value="${user.lastName}" /></td>
+                <td><c:out value="${user.email}" /></td>
+                <td><c:out value="${user.password}" /></td>
+                <td><c:out value="${user.phoneNo}" /></td>
             </tr>
             </tbody>
         </table>

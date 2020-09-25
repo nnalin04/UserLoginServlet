@@ -5,9 +5,11 @@ import java.sql.*;
 
 public class UserRepo {
 
-    private final String tableName;
+    private String tableName;
     Connection conn;
     PreparedStatement myStmt = null;
+
+    public UserRepo(){ }
 
     public UserRepo(String url, String userId, String password, String tableName) {
         createConnection(url, userId, password);
@@ -37,6 +39,25 @@ public class UserRepo {
         myStmt.setString(4, user.password);
         myStmt.setString(5, user.phoneNo);
         myStmt.executeUpdate();
+    }
+
+    public boolean loginUser(User loginBean){
+        boolean status = false;
+
+        String sql = "select * from tableName where username = ? and password =?";
+        sql = this.addTableName(sql);
+        PreparedStatement ps;
+        try {
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, loginBean.email);
+            ps.setString(2, loginBean.password);
+            ResultSet rs = ps.executeQuery();
+            status = rs.next();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return status;
     }
 
     public User findByEmailId(String email) throws SQLException {

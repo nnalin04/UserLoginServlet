@@ -16,39 +16,41 @@
     <link href="register.css" rel="stylesheet">
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="./login.jsp">User login</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="./register.jsp">
-                        User Registration<span class="sr-only">(current)</span>
-                    </a>
-                </li>
-        </ul>
-    </div>
-</nav>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="./login.jsp">User login</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="./register.jsp">
+                            User Registration<span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+            </ul>
+        </div>
+    </nav>
 <div class="container">
     <div class="card">
         <div class="card-body">
-            <c:if test="${user != null}">
-                <form action="<%= request.getContextPath()%>register" method="post">
-            </c:if>
-            <c:if test="${user == null}">
-                <form action="<%= request.getContextPath()%>update" method="post">
-            </c:if>
-            <caption>
-                <h1 class="h3 text-center mb-3 font-weight-normal">
-                    <c:if test="${user != null}">
-                        Registration
+            <div class="card-body">
+                <c:if test="${user != null}">
+                <form action="update" method="post">
                     </c:if>
                     <c:if test="${user == null}">
-                        Edit User
-                    </c:if>
-                </h1>
-            </caption>
+                    <form action="register" method="post">
+                        </c:if>
+
+                        <caption>
+                            <h2>
+                                <c:if test="${user != null}">
+                                    Edit User
+                                </c:if>
+                                <c:if test="${user == null}">
+                                    Add New User
+                                </c:if>
+                            </h2>
+                        </caption>
                 <div class="form-group">
                     <label for="firstName">First Name</label>
                     <input type="text" class="form-control" name="firstName" id="firstName"
@@ -77,6 +79,7 @@
                 <button type="submit" class="btn btn-success">Save</button>
                 </form>
         </div>
+    </div>
     </div>
 </div>
 </body>

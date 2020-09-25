@@ -43,18 +43,19 @@
                 <th>Email Id</th>
                 <th>Password</th>
                 <th>Phone No.</th>
+                <th>Actions</th>
             </tr>
             </thead>
             <tbody>
             <tr>
-                <c: var="user">
-                    <td><jsp:useBean id="user" scope="request" type="com.bridgelabz.userloginwebapp.model.User"/>
-                    <c:out value="${user.firstName}" /></td>
-                    <td><c:out value="${user.lastName}" /></td>
-                    <td><c:out value="${user.email}" /></td>
-                    <td><c:out value="${user.password}" /></td>
-                    <td><c:out value="${user.phoneNo}" /></td>
-                </c:>
+                <td><c:out value="${user.firstName}" /></td>
+                <td><c:out value="${user.lastName}" /></td>
+                <td><c:out value="${user.email}" /></td>
+                <td><c:out value="${user.password}" /></td>
+                <td><c:out value="${user.phoneNo}" /></td>
+                <td><a href="edit?id=<c:out value='${user.id}' />">Edit</a>
+                    &nbsp;&nbsp;&nbsp;&nbsp; <a
+                            href="delete?id=<c:out value='${user.id}' />">Delete</a></td>
             </tr>
             </tbody>
         </table>
