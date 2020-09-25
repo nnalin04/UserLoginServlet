@@ -62,7 +62,7 @@ public class LoginServlet extends HttpServlet {
             user.password = password;
             if (loginDao.loginUser(user))
             {
-                res.sendRedirect("./loginSuccess.jsp");
+                res.sendRedirect("./editOrDelete.jsp");
             }
             else
             {
